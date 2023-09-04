@@ -1,10 +1,11 @@
 
 <?php 
+    $dbh = new PDO('mysql:host=localhost;dbname=parking', 'root', '');
+
     if(isset($_POST['color'])){ 
         $selected_color= $_POST['color'];
 
         try {
-            $dbh = new PDO('mysql:host=localhost;dbname=parking', 'root', '');
 
             $stmt = $dbh->prepare("INSERT INTO colors (color) VALUES(?)");
 
@@ -21,20 +22,16 @@
         }
     };
 
-    try {
-        $dbh = new PDO('mysql:host=localhost;dbname=parking', 'root', '');
 
-        try {
-            $stmt_brands = $dbh->query("SELECT * FROM brands")->fetchAll();
-            $stmt_models = $dbh->query("SELECT * FROM models")->fetch();
-            $stmt_colors = $dbh->query("SELECT * FROM colors")->fetchAll();
-            $stmt_spaces = $dbh->query("SELECT * FROM spaces")->fetchAll();
-        } catch(PDOExecption $e) {
-            print "Error!: " . $e->getMessage() . "</br>";
-        }
-    } catch( PDOExecption $e ) {
+    try {
+        $stmt_brands = $dbh->query("SELECT * FROM brands")->fetchAll();
+        $stmt_models = $dbh->query("SELECT * FROM models")->fetch();
+        $stmt_colors = $dbh->query("SELECT * FROM colors")->fetchAll();
+        $stmt_spaces = $dbh->query("SELECT * FROM spaces")->fetchAll();
+    } catch(PDOExecption $e) {
         print "Error!: " . $e->getMessage() . "</br>";
     }
+
 ?>
 
 
