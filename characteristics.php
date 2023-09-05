@@ -104,16 +104,15 @@
         <p class="mb-3 fs-1">Crear un color</p>
         
         <div class="mb-2 flex flex-column">
-        <label class="" for="input-color">Selecciona un color:</label> 
-            <div class="flex  mt-2 items-center">
-                <input name="color" class="unstyle " id="input-color" required type="color">
-                <input type="submit" class="button-submit submit-color" value="Crear color" name="submit">
-            </div>
+                <label class="" for="input-color">Selecciona un color:</label> 
+                <input name="color" class="mb-2 mt-2"  id="input-color" required type="text">
+                <input type="submit" class="button-submit input-radius" name="submit">
         </div>
+
         <div class="result">
             <?php if(isset($_POST['color'])): ?>
                 <div class="flex">
-                    <p>Se creo el color: </p> <div class="div-circle" style="background: <?= $_POST['color']?>;"></div>
+                    <p>Se creo el color: <?= $_POST['color']?></p>
                 </div>
             <?php endif ?>
         </div>
@@ -136,37 +135,34 @@
      </form>
      <hr>    
      <form name="model_to_brand_form" class="" action="" method="post">
-            <p class="mb-3 fs-1">Crear un modelo para una marca</p>
+        <p class="mb-3 fs-1">Crear un modelo para una marca</p>
 
-                
-          
-            <?php if(isset($_POST['modelName'])): ?>
-                <div class="result">
-                    <?php if(isset($_POST['modelName'])): ?>
-                        <div class="flex">
-                            <p>Se creo el modelo:  <strong><?= $_POST['modelName']?></strong> para: <?= $brandNameAsociated['brandName'] ?> </p>
-                            
-                        </div>
-                    <?php endif ?>
-                </div>
-            <?php else: ?>
+        
+        <div class="mb-3 flex flex-column"> 
+            <label for="brandSelect">seleccione una marca:</label>
+            <select required name="brandId" class="mt-2" id="brandSelect">
+                <?php foreach($allBrands as $key ){ ?>
+                    <option  value="<?= $key['id'];?>"> <?= $key['brandName'];?></option> 
 
-                <div class="mb-3 flex flex-column"> 
-                    <label for="brandSelect">seleccione una marca:</label>
-                    <select required name="brandId" class="mt-2" id="brandSelect">
-                        <?php foreach($allBrands as $key ){ ?>
-                            <option  value="<?= $key['id'];?>"> <?= $key['brandName'];?></option> 
+                <?php } ?>
+            </select>
+        </div>
 
-                        <?php } ?>
-                    </select>
-                </div>
-
-                <div class="mb-2 flex flex-column"> 
-                    <label for="modelName">ingrese un modelo:</label> 
-                    <input name="modelName" required id="modelName" class="mt-2 mb-2" type="text">
-                    <input type="submit" class="button-submit input-radius" name="submit">
-                </div>
-            <?php endif; ?>
+        <div class="mb-2 flex flex-column"> 
+            <label for="modelName">ingrese un modelo:</label> 
+            <input name="modelName" required id="modelName" class="mt-2 mb-2" type="text">
+            <input type="submit" class="button-submit input-radius" name="submit">
+        </div>
+        <?php if(isset($_POST['modelName'])): ?>
+            <div class="result">
+                <?php if(isset($_POST['modelName'])): ?>
+                    <div class="flex">
+                        <p>Se creo el modelo:  <strong><?= $_POST['modelName']?></strong> para: <?= $brandNameAsociated['brandName'] ?> </p>
+                        
+                    </div>
+                <?php endif ?>
+            </div>
+        <?php endif ?>
      </form>
 </div>
 
@@ -214,37 +210,6 @@
 
     .fs-3 {
         font-size: 1.2rem ;
-    }
-
-    #input-color {
-        height: 34px;
-        width: 80px;
-        height: 40px;
-    }
-
-    #input-color::-webkit-color-swatch-wrapper {
-        padding: 0; 
-    }
-
-    #input-color::-webkit-color-swatch {
-        border: none;
-        border-radius: 20px 0 0 20px;
-    }
-
-    .submit-color{
-        margin-left: -3px;
-        height: 40px;
-        border-radius: 0 4px 4px 0;
-    }
-
-    input[type=color] {
-        border:none;
-        background-image:none;
-        background-color:transparent;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
-        cursor: pointer;
     }
 
     input[type=submit] {
@@ -299,8 +264,6 @@
     }
 
 </style>
-
-
 
 </body>
 </html>

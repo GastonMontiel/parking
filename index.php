@@ -73,30 +73,37 @@
 
                 <div class="card-style">
                     <p>PARKING</p>
+                    
+
+                        <?php $variableToCalculateFloors = 0 ?>
+
                         <?php foreach( $stmt_spaces as $key=> $value){ ?>
-                            <?php
-                                $id_to_calculate = ($value['id'] - 1)
-                            ?>
-                            <?php if( $id_to_calculate % 10 == 0): ?>
+
+
+                            <?php if( $variableToCalculateFloors != $value['floor'] ): ?>
+                                <?php $variableToCalculateFloors = $value['floor'] ?>
+
                                 <details>
-                                    <summary class="cursor-pinter">Piso: <?=  ($id_to_calculate / 10) + 1?></summary>
+                                    <summary class="cursor-pinter">Piso: <?=  $value['floor'] ?></summary>
                                     <div class="floor">
                             <?php endif ?>
 
-                                <?php if($id_to_calculate % 5 == 0): ?>
+                                <?php if($key % 5 == 0): ?>
                                         <div>
                                 <?php endif ?>
                             
                                     <div class="p-1">
                                         <p> Lugar: <?= $value['id'] ?> </p> 
-                                        <div class="cursor-pinter"  tabindex="0" role="button" aria-pressed="false" onclick="openFormWithSpaceId('<?php echo $value['id'];?>','<?php echo ($id_to_calculate / 10) + 1?>', this)" > Reservar </div> 
+                                        <div class="cursor-pinter"  tabindex="0" role="button" aria-pressed="false" onclick="openFormWithSpaceId('<?php echo $value['id'];?>','<?php echo $value['floor'] ?>', this)" > Reservar </div> 
                                     </div>
 
-                                <?php if(($id_to_calculate + 1) % 5 == 0): ?>
+                                <?php if($key + 1  % 5 == 0): ?>
                                         </div>
                                 <?php endif ?>
-                            
-                            <?php if(($id_to_calculate + 1) % 10 == 0): ?>
+
+
+                            <?php $nextSpaceFloor = (array_key_exists($key + 1, $stmt_spaces)) ? ($stmt_spaces[($key + 1)]['floor']) : (6)?>     
+                            <?php if($variableToCalculateFloors != $nextSpaceFloor) :?>
                                     </div>
                                 </details>
                             <?php endif ?>
@@ -123,19 +130,17 @@
                         <div class="mb-3 flex flex-column"> 
                             <label for="colorSelect">seleccione un color:</label>
 
-                            <select required name="colorId" id="input-color" class="mt-2" id="colorSelect" onchange="selectedColor()">
+                            <select required name="colorId" id="input-color" class="mt-2" id="colorSelect">
                                 <?php foreach($stmt_colors as $key ){ ?>
-                                    <option data-value="<?= $key['color'];?>" class="div-circle" style="background:<?= $key['color'];?>;" value="<?= $key['id'];?>"></option> 
+                                    <option value="<?= $key['id'];?>" > <?=  $key['color'] ?> </option> 
                                 <?php } ?>
                             </select>
-
-                            <div class="div-circle" style="background: transparent" id="selected-color"></div>
                         </div>
 
 
                         <div class="mb-3 flex flex-column"> 
                             <label for="brandSelect">seleccione una marca:</label>
-                            <select required name="brandId" class="mt-2" id="brandSelect">
+                            <select required name="brandId" class="mt-2" id="brandSelect" onchange="modelsByBrandId()">
                                 <?php foreach($stmt_brands as $key ){ ?>
                                     <option  value="<?= $key['id'];?>"> <?= $key['brandName'];?></option> 
                                 <?php } ?>
@@ -144,7 +149,7 @@
 
                         <div class="mb-3 flex flex-column"> 
                             <label for="brandSelect">fetch para cargar los modelos de la marca:</label>
-                            <select required name="brandId" class="mt-2" id="brandSelect">
+                            <select required name="modelName" id='models-by-brand' class="mt-2" id="brandSelect">
                                 <?php foreach($stmt_brands as $key ){ ?>
                                     <option value="<?= $key['id'];?>"> <?= $key['brandName'];?></option> 
                                 <?php } ?>
@@ -264,7 +269,7 @@
             }
 
             const modelsByBrandId = () => {
-                console.log("recupere  los modelos");
+                console.log("recupere los modelos");
             }
 
             const vehicleDataByLicencePlate = (e) => {
@@ -283,7 +288,6 @@
             }
 
             const firstLoad = () => {
-                selectedColor()
                 modelsByBrandId()
             }
 

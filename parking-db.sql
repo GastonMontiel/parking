@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS parking;
+  CREATE DATABASE IF NOT EXISTS parking;
 
 USE parking;
 
@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS spaces(
 	floor int NOT NULL
 );
 
-INSERT INTO spaces (isFree)
-SELECT 1 AS isFree
+
+INSERT INTO spaces (isFree, floor)
+SELECT 1 AS isFree, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1) DIV 10 + 1 AS floor
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE NOT EXISTS (SELECT 1 FROM spaces)
 LIMIT 50;
 
 CREATE TABLE IF NOT EXISTS vehicles( 
@@ -37,19 +37,9 @@ CREATE TABLE IF NOT EXISTS vehicles(
 	brandId INT UNSIGNED not null,
 	colorId INT UNSIGNED not null,
 	modelId INT UNSIGNED not null,
+	spaceId INT UNSIGNED not null,
  	foreign key (modelId) references models(id),
  	foreign key (brandId) references brands(id),
- 	foreign key (colorId) references colors(id)
+ 	foreign key (colorId) references colors(id),
+ 	foreign key (spaceId) references spaces(id)
 );
-
-CREATE TABLE IF NOT EXISTS vehiclesSpaces( 
-	id int unsigned not null primary key auto_increment,
-	vehicleId INT NOT null,
-	spaceId INT UNSIGNED NOT null,
-	arriveDate datetime NOT null,
-	leaveDate datetime NOT null,
- 	foreign KEY (spaceId) references spaces(id),
- 	foreign key (vehicleId) references vehicles(id)
-)
-
-
