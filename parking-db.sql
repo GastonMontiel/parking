@@ -32,7 +32,7 @@ FROM INFORMATION_SCHEMA.COLUMNS
 LIMIT 50;
 
 CREATE TABLE IF NOT EXISTS vehicles( 
-	id int not null primary key,
+	id int not null primary key auto_increment,
 	licencePlate VARCHAR(55) not null,
 	brandId INT UNSIGNED not null,
 	colorId INT UNSIGNED not null,
