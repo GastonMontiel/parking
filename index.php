@@ -38,11 +38,28 @@ if (isset($error)) {
 }
 
 if (!isset($_GET["id"])) {
-  $counts = $dbh->query("SELECT (SELECT COUNT(*) FROM brands) AS brands, (SELECT 0) AS colors, (SELECT COUNT(*) FROM models) AS models")->fetch(PDO::FETCH_OBJ);
+  $counts = $dbh->query("SELECT (SELECT COUNT(*) FROM brands) AS brands, (SELECT COUNT(*) FROM colors) AS colors, (SELECT COUNT(*) FROM models) AS models")->fetch(PDO::FETCH_OBJ);
   $hasInfo = $counts->brands > 0 && $counts->colors > 0 && $counts->models > 0;
   if ($hasInfo) {
     $spaces = $dbh->query("SELECT * FROM spaces")->fetchAll(PDO::FETCH_OBJ);
   }
+} else {
+
+  $licence_plate = $_GET["id"];
+
+  if (empty($licence_plate)) {
+    $error = [
+      "field" => "id",
+      "details" => "required"
+    ];
+  } else {
+    $stmt = $dbh->prepare("SELECT * FROM vehicles WHERE licencePlate = ?");
+    $stmt->execute([$licence_plate]);
+    $vehicle = $stmt->fetch(PDO::FETCH_OBJ);
+  }
+
+
+  $selected_space = $dbh->query("SELECT * FROM spaces")->fetchAll(PDO::FETCH_OBJ);
 }
 
 // try {
@@ -65,9 +82,27 @@ if (!isset($_GET["id"])) {
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap" rel="stylesheet">
   <title>PARKING</title>
   <style>
+    *,
+    *::after,
+    *::before {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
     body {
       margin: 0;
-      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      background-image: url("parking_image.jpg");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 80px;
     }
 
     summary {
@@ -82,20 +117,6 @@ if (!isset($_GET["id"])) {
 
     summary::-webkit-details-marker {
       display: none;
-    }
-
-    .background {
-      background-image: url("parking_image.jpg");
-      object-fit: cover;
-      height: 90vh;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center center;
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-top: 80px;
-      position: relative;
-      overflow: scroll;
     }
 
     .floor {
@@ -157,46 +178,32 @@ if (!isset($_GET["id"])) {
 </head>
 
 <body>
-  <div class="background">
-    <?php if (empty($brands) || empty($models) || empty($colors)) : ?>
-      <div class="container-form">
-        <div class="result">
-          <p>
-            Para poder ingresar un vehiculo al parking debe generar caracteristicas.
-          </p>
+  <?php if (!isset($spaces) || empty($spaces)) : ?>
+    <div class="container-form">
+      <div class="result">
+        <p>
+          Para poder ingresar un vehiculo al parking debe generar caracteristicas.
+        </p>
+        <?php if (empty($brands)) : ?>
+          <p> Debe tener al menos una Marca. </p>
+        <?php endif ?>
 
-          <?php if (empty($brands)) : ?>
-            <p> Debe tener al menos una Marca. </p>
-          <?php endif ?>
+        <?php if (empty($models)) : ?>
+          <p> Debe tener al menos un modelo. </p>
+        <?php endif ?>
 
-          <?php if (empty($models)) : ?>
-            <p> Debe tener al menos un modelo. </p>
-          <?php endif ?>
+        <?php if (empty($colors)) : ?>
+          <p> Debe tener al menos un color. </p>
+        <?php endif ?>
 
-          <?php if (empty($colors)) : ?>
-            <p> Debe tener al menos un color. </p>
-          <?php endif ?>
-
-          <a href="/characteristics">Generar caracteristicas</a>
-        </div>
+        <a href="/characteristics">Generar caracteristicas</a>
       </div>
-    <?php elseif (isset($_GET["id"])) : ?>
+    </div>
+  <?php else : ?>
 
-      <div id="reserve-space-container" class="card-style">
+    <!-- <div id="reserve-space-container" class="card-style">
 
-
-        <p class="mb-3 fs-1" id="space-title">Reservar lugar: <?= $_GET["id"] ?></p>
-
-        <form action="" method="post">
-          <div class="mb-2 flex flex-column">
-            <label for="licencePlate">Matrícula:</label>
-            <input name="licencePlate" required id="licence-plate" class="mt-2 mb-2" type="text">
-            <span id="licence-plate-error" style="color: red;"></span>
-            <input type="submit" class="button-submit input-radius" name="submitLicencePlate" value="Reservar">
-          </div>
-        </form>
-
-        <!-- <form id="reserve-space-form" action="" method="post">
+       <form id="reserve-space-form" action="" method="post">
   <input name="spaceId" required id="input-space-id" type="hidden" value="">
 
   <div class="mb-3 flex flex-column">
@@ -227,48 +234,47 @@ if (!isset($_GET["id"])) {
       <?php } ?>
     </select>
   </div>
-</form> -->
-      </div>
-    <?php else : ?>
-      <div class="card-style">
-        <p>PARKING</p>
+</form> 
+    </div>-->
 
-        <?php $variableToCalculateFloors = 0 ?>
+    <div class="card-style">
+      <p>PARKING</p>
 
-        <?php foreach ($spaces as $key => $value) : ?>
-          <?php if ($variableToCalculateFloors != $value['floor']) : ?>
-            <?php $variableToCalculateFloors = $value['floor'] ?>
+      <?php $variableToCalculateFloors = 0; ?>
 
-            <details>
-              <summary class="cursor-pinter">Piso: <?= $value['floor'] ?></summary>
-              <div class="floor">
+      <?php foreach ($spaces as $key => $value) : ?>
+        <?php if ($variableToCalculateFloors != $value->floor) : ?>
+          <?php $variableToCalculateFloors = $value->floor ?>
+
+          <details>
+            <summary class="cursor-pinter">Piso: <?= $value->floor ?></summary>
+            <div class="floor">
+            <?php endif ?>
+
+            <?php if ($key % 5 == 0) : ?>
+              <div>
               <?php endif ?>
 
-              <?php if ($key % 5 == 0) : ?>
-                <div>
-                <?php endif ?>
-
-                <div class="p-1">
-                  <p> Lugar: <?= $value['id'] ?> </p>
-                  <a href="?id=<?= $value["id"] ?>" class="cursor-pinter" tabindex="0" role="button" aria-pressed="false"> Reservar </a>
-                </div>
-
-                <?php if ($key + 1  % 5 == 0) : ?>
-                </div>
-              <?php endif ?>
-
-
-              <?php $nextSpaceFloor = (array_key_exists($key + 1, $spaces)) ? ($spaces[($key + 1)]['floor']) : (6) ?>
-              <?php if ($variableToCalculateFloors != $nextSpaceFloor) : ?>
+              <div class="p-1">
+                <p> Lugar: <?= $value->id ?> </p>
+                <a href="reservar?id=<?= $value->id ?>" class="cursor-pinter" tabindex="0" role="button" aria-pressed="false"> Reservar </a>
               </div>
-            </details>
-          <?php endif ?>
-        <?php endforeach ?>
 
-      </div>
-    <?php endif ?>
+              <?php if ($key + 1  % 5 == 0) : ?>
+              </div>
+            <?php endif ?>
 
-  </div>
+
+            <?php $nextSpaceFloor = (array_key_exists($key + 1, $spaces)) ? ($spaces[($key + 1)]->floor) : (6) ?>
+            <?php if ($variableToCalculateFloors != $nextSpaceFloor) : ?>
+            </div>
+          </details>
+        <?php endif ?>
+      <?php endforeach ?>
+
+    </div>
+  <?php endif ?>
+
   <!-- <script>
     function openFormWithSpaceId(id, floor, e) {
       const formsContainer = document.getElementById("reserve-space-container")
@@ -284,17 +290,7 @@ if (!isset($_GET["id"])) {
       const divSelectedColor = document.getElementById("selected-color").setAttribute('style', `background:${selectColorHex};`)
     }
 
-    const modelsByBrandId = () => {
-      try {
-        const response = fetch('/api.php', {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-      } catch (error) {
 
-      }
-    }
 
     const handleSubmitLicensePlate = (e) => {
       e.preventDefault();

@@ -33,11 +33,11 @@ LIMIT 50;
 
 CREATE TABLE IF NOT EXISTS vehicles( 
 	id int not null primary key auto_increment,
-	licencePlate VARCHAR(55) not null,
+	licensePlate VARCHAR(55) not null,
 	brandId INT UNSIGNED not null,
 	colorId INT UNSIGNED not null,
 	modelId INT UNSIGNED not null,
-	spaceId INT UNSIGNED not null,
+	spaceId INT UNSIGNED UNIQUE,
  	foreign key (modelId) references models(id),
  	foreign key (brandId) references brands(id),
  	foreign key (colorId) references colors(id),
