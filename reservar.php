@@ -157,7 +157,7 @@ if (isset($_POST['licensePlate'])) {
   <div id="reserve-space-container" class="card-style">
     <p class="mb-3 fs-1" id="space-title">Reservar lugar: <?= $_GET["id"] ?> (piso: <?= $space->floor ?>)</p>
 
-    <?php if ($vehicle) { ?>
+    <?php if (!empty($vehicle)) { ?>
       <form id="reserve-space-form" action="/finalizar.php" method="post">
         <input name="spaceId" type="hidden" value="<?= $_GET["id"] ?>">
         <input name="vehicleId" type="hidden" value="<?= $vehicle->id ?>">

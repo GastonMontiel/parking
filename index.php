@@ -37,6 +37,17 @@ if (isset($error)) {
   echo "</pre>";
 }
 
+if (isset($_POST["freeUpId"])) {
+
+  $vehicle_stmt = $dbh->prepare("SELECT id FROM vehicles WHERE spaceId = ?");
+  $vehicle_stmt->execute([$_POST["freeUpId"]]);
+  $vehicle_out = $vehicle_stmt->fetch(PDO::FETCH_OBJ);
+  if (!empty($vehicle_out)) {
+    $space_updated = $dbh->prepare("UPDATE spaces SET isFree = ? WHERE id = ?")->execute([1,  $_POST["freeUpId"]]);
+    $vehicle_updated =  $dbh->prepare("UPDATE vehicles SET spaceId = ? WHERE id = ?")->execute([null, $vehicle_out->id]);
+  }
+}
+
 if (!isset($_GET["id"])) {
   $counts = $dbh->query("SELECT (SELECT COUNT(*) FROM brands) AS brands, (SELECT COUNT(*) FROM colors) AS colors, (SELECT COUNT(*) FROM models) AS models")->fetch(PDO::FETCH_OBJ);
   $hasInfo = $counts->brands > 0 && $counts->colors > 0 && $counts->models > 0;
@@ -62,14 +73,6 @@ if (!isset($_GET["id"])) {
   $selected_space = $dbh->query("SELECT * FROM spaces")->fetchAll(PDO::FETCH_OBJ);
 }
 
-// try {
-//   $brands = $dbh->query("SELECT * FROM brands")->fetchAll();
-//   $models = $dbh->query("SELECT * FROM models")->fetch();
-//   $colors = $dbh->query("SELECT * FROM colors")->fetchAll();
-//   $spaces = $dbh->query("SELECT * FROM spaces")->fetchAll();
-// } catch (PDOException $e) {
-//   print "Error!: " . $e->getMessage() . "</br>";
-// }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -200,43 +203,6 @@ if (!isset($_GET["id"])) {
       </div>
     </div>
   <?php else : ?>
-
-    <!-- <div id="reserve-space-container" class="card-style">
-
-       <form id="reserve-space-form" action="" method="post">
-  <input name="spaceId" required id="input-space-id" type="hidden" value="">
-
-  <div class="mb-3 flex flex-column">
-    <label for="colorSelect">seleccione un color:</label>
-
-    <select required name="colorId" id="input-color" class="mt-2" id="colorSelect">
-      <?php foreach ($colors as $key) { ?>
-        <option value="<?= $key['id']; ?>"> <?= $key['color'] ?> </option>
-      <?php } ?>
-    </select>
-  </div>
-
-
-  <div class="mb-3 flex flex-column">
-    <label for="brandSelect">seleccione una marca:</label>
-    <select required name="brandId" class="mt-2" id="brandSelect" onchange="modelsByBrandId()">
-      <?php foreach ($brands as $key) { ?>
-        <option value="<?= $key['id']; ?>"> <?= $key['brandName']; ?></option>
-      <?php } ?>
-    </select>
-  </div>
-
-  <div class="mb-3 flex flex-column">
-    <label for="brandSelect">fetch para cargar los modelos de la marca:</label>
-    <select required name="modelName" id='models-by-brand' class="mt-2" id="brandSelect">
-      <?php foreach ($brands as $key) { ?>
-        <option value="<?= $key['id']; ?>"> <?= $key['brandName']; ?></option>
-      <?php } ?>
-    </select>
-  </div>
-</form> 
-    </div>-->
-
     <div class="card-style">
       <p>PARKING</p>
 
@@ -251,19 +217,18 @@ if (!isset($_GET["id"])) {
             <div class="floor">
             <?php endif ?>
 
-            <?php if ($key % 5 == 0) : ?>
-              <div>
+            <div class="p-1">
+              <p> Lugar: <?= $value->id ?> </p>
+              <?php if ($value->isFree) : ?>
+                <a href="reservar?id=<?= $value->id ?>" class="cursor-pinter" tabindex="0" role="button" aria-pressed="false"> Reservar </a>
+              <?php else : ?>
+                <form action="" method="post">
+                  <input type="hidden" name="freeUpId" value=<?= $value->id ?>>
+                  <button>Liberar</button>
+                </form>
               <?php endif ?>
 
-              <div class="p-1">
-                <p> Lugar: <?= $value->id ?> </p>
-                <a href="reservar?id=<?= $value->id ?>" class="cursor-pinter" tabindex="0" role="button" aria-pressed="false"> Reservar </a>
-              </div>
-
-              <?php if ($key + 1  % 5 == 0) : ?>
-              </div>
-            <?php endif ?>
-
+            </div>
 
             <?php $nextSpaceFloor = (array_key_exists($key + 1, $spaces)) ? ($spaces[($key + 1)]->floor) : (6) ?>
             <?php if ($variableToCalculateFloors != $nextSpaceFloor) : ?>
