@@ -67,6 +67,9 @@ if (isset($_POST['licensePlate'])) {
     html,
     body {
       height: 100%;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
     }
 
     body {
@@ -81,10 +84,50 @@ if (isset($_POST['licensePlate'])) {
       padding-top: 80px;
     }
 
+    select {
+      width: 100%;
+      padding: 16px 20px;
+      border: none;
+      border-radius: 4px;
+      background-color: #f1f1f1;
+    }
+
+    details {
+      width: 285px;
+    }
+
+
+    details[open]>summary {
+      background-color: #dcdcdc;
+      border-bottom: solid 1px gray;
+    }
+
     summary {
       display: block;
       list-style: none;
+      padding: 10px;
+      border: solid 1px gray;
+      border-bottom: none;
     }
+
+    summary:hover {
+      background-color: #f2f2f2;
+    }
+
+    .clean-styles {
+      all: unset;
+    }
+
+    .floors {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    details:last-of-type {
+      border-bottom: solid 1px gray;
+    }
+
 
     summary::after {
       display: block;
@@ -95,10 +138,79 @@ if (isset($_POST['licensePlate'])) {
       display: none;
     }
 
+    .space {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .space p {
+      margin: 0;
+      margin-bottom: 5px;
+    }
+
+    .button-style {
+      padding: 5px;
+      border-radius: 4px;
+      width: 70px;
+    }
+
+    .button-green {
+      background: #2e9e4b;
+      color: white;
+      font-weight: 400;
+    }
+
+    .button-green:hover {
+      background: #008030;
+    }
+
+    .button-red {
+      background: #ff3616;
+      color: white;
+      font-weight: 400;
+    }
+
+    .button-red:hover {
+      background: #ec0001;
+    }
+
+    .button-blue {
+      background: #5eafe9;
+      color: white;
+      font-weight: 400;
+    }
+
+    .button-blue:hover {
+      background: #4491c8;
+    }
+
+    .search-button-height {
+      height: 37px;
+    }
+
+    .input-styles {
+      margin-right: 10px;
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+      background-color: white;
+      background-position: 10px 10px;
+      background-repeat: no-repeat;
+      padding: 12px 20px 12px 40px;
+    }
+
     .floor {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-evenly;
+      margin: 0 5px 5px 5px;
+      border: solid 1px gray;
+      border-top: none;
+      background: #f2f2f2;
+      gap: 10px;
     }
 
     .card-style {
@@ -106,6 +218,47 @@ if (isset($_POST['licensePlate'])) {
       border-radius: 8px;
       border: solid 1px gray;
       padding: 10px;
+      margin-bottom: 20px;
+      width: 400px;
+      height: fit-content;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
     }
 
     .cursor-pinter {
@@ -140,6 +293,10 @@ if (isset($_POST['licensePlate'])) {
       font-size: 1.2rem;
     }
 
+    .text-center {
+      text-align: center;
+    }
+
     .div-circle {
       border-radius: 50px;
       height: 18px;
@@ -150,22 +307,59 @@ if (isset($_POST['licensePlate'])) {
     .display-none {
       display: none;
     }
+
+    .flex {
+      display: flex;
+    }
+
+    .flex-column {
+      flex-direction: column;
+    }
+
+    .justify-center {
+      justify-content: center;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .align-end {
+      align-items: end;
+    }
+
+    .px-4 {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
   </style>
 </head>
 
 <body>
   <div id="reserve-space-container" class="card-style">
-    <p class="mb-3 fs-1" id="space-title">Reservar lugar: <?= $_GET["id"] ?> (piso: <?= $space->floor ?>)</p>
+    <p class="mb-3  fs-1 text-center" id="space-title">Reservar lugar: <?= $_GET["id"] ?> (piso: <?= $space->floor ?>)</p>
 
     <?php if (!empty($vehicle)) { ?>
       <form id="reserve-space-form" action="/finalizar.php" method="post">
         <input name="spaceId" type="hidden" value="<?= $_GET["id"] ?>">
         <input name="vehicleId" type="hidden" value="<?= $vehicle->id ?>">
-        <p><?= $vehicle->licensePlate ?></p>
-        <p><?= $vehicle->brand ?></p>
-        <p><?= $vehicle->model ?></p>
-        <p><?= $vehicle->color ?></p>
-        <input type="submit" class="button-submit input-radius" name="submitLicensePlate" value="Reservar">
+        <div class="flex justify-between px-4">
+          <div>
+            <p>Matrícula:</p>
+            <p>Marca:</p>
+            <p>Modelo:</p>
+            <p>Color:</p>
+          </div>
+          <div class="">
+            <p> <?= $vehicle->licensePlate ?></p>
+            <p><?= $vehicle->brand ?></p>
+            <p><?= $vehicle->model ?></p>
+            <p> <?= $vehicle->color ?></p>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <input type="submit" class="button-style button-green clean-styles text-center search-button-height" name="submitLicensePlate" value="Reservar">
+        </div>
       </form>
     <?php } elseif (isset($_POST['licensePlate'])) { ?>
       <form id="reserve-space-form" action="/finalizar.php" method="post">
@@ -204,11 +398,14 @@ if (isset($_POST['licensePlate'])) {
       </form>
     <?php } else { ?>
       <form action="" method="post">
-        <div class="mb-2 flex flex-column">
-          <label for="licensePlate">Matrícula:</label>
-          <input name="licensePlate" required id="license-plate" class="mt-2 mb-2" type="text">
+        <div class="mb-2 flex align-end">
+          <div class="flex flex-column ">
+            <label for="licensePlate">Matrícula:</label>
+            <input name="licensePlate" required id="license-plate" class=" clean-styles input-styles" type="text">
+          </div>
+
           <span id="license-plate-error" style="color: red;"></span>
-          <input type="submit" class="button-submit input-radius" name="submitLicensePlate" value="Buscar">
+          <input type="submit" class="button-style button-blue clean-styles text-center search-button-height" name="submitLicensePlate" value="Buscar">
         </div>
       </form>
     <?php } ?>
