@@ -151,9 +151,10 @@ if (isset($_POST['licensePlate'])) {
     }
 
     .button-style {
-      padding: 5px;
+      padding-top: 5px;
+      padding-bottom: 5px;
       border-radius: 4px;
-      width: 70px;
+      width: 100%;
     }
 
     .button-green {
@@ -422,7 +423,7 @@ if (isset($_POST['licensePlate'])) {
           </select>
         </div>
 
-        <input type="submit" class="button-submit input-radius" name="submitLicensePlate" value="Reservar">
+        <button type="submit" class="button-style button-green clean-styles text-center" name="submitLicensePlate"> Reservar </button>
       </form>
     <?php } else { ?>
       <form action="" method="post">

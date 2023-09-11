@@ -122,6 +122,7 @@ if (isset($_POST['modelName']) && isset($_POST['brandId'])) {
             padding-left: 20px;
             padding-right: 20px;
             padding-top: 80px;
+            width: 100%;
         }
 
         details {
