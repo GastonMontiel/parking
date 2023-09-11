@@ -60,14 +60,15 @@ if (!isset($_GET["id"])) {
         ON s.id = v.spaceId"
     )->fetchAll(PDO::FETCH_OBJ);
   }
-
-  $freeSpacesByFloor = [];
-  foreach ($spaces as $space) {
-    if ($space->isFree) {
-      if (!isset($freeSpacesByFloor[$space->floor])) {
-        $freeSpacesByFloor[$space->floor] = 0;
+  if (!empty($spaces)) {
+    $freeSpacesByFloor = [];
+    foreach ($spaces as $space) {
+      if ($space->isFree) {
+        if (!isset($freeSpacesByFloor[$space->floor])) {
+          $freeSpacesByFloor[$space->floor] = 0;
+        }
+        $freeSpacesByFloor[$space->floor]++;
       }
-      $freeSpacesByFloor[$space->floor]++;
     }
   }
 } else {
@@ -322,7 +323,7 @@ if (!isset($_GET["id"])) {
 
 <body>
   <?php if (!isset($spaces) || empty($spaces)) : ?>
-    <div class="container-form">
+    <div class="card-style">
       <div class="result">
         <p>
           Para poder ingresar un vehiculo al parking debe generar caracteristicas.
