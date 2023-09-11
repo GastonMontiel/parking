@@ -185,7 +185,6 @@ if (isset($_POST['modelName']) && isset($_POST['brandId'])) {
         .button-style {
             padding: 5px;
             border-radius: 4px;
-            width: 70px;
         }
 
         .button-green {
@@ -355,18 +354,51 @@ if (isset($_POST['modelName']) && isset($_POST['brandId'])) {
         .align-end {
             align-items: end;
         }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .navbar a:hover {
+            background: #ddd;
+            color: black;
+        }
+
+        .main {
+            padding: 16px;
+            margin-top: 30px;
+            height: 1500px;
+            /* Used in this example to enable scrolling */
+        }
     </style>
 </head>
 
 <body>
-    <div class="container-form">
+    <div class="navbar">
+        <a href="/">Inicio</a>
+    </div>
+    <div class="card-style">
         <form name="color_form" class="" action="" method="post">
             <p class="mb-3 fs-1">Crear un color</p>
 
             <div class="mb-2 flex flex-column">
                 <label class="" for="input-color">Selecciona un color:</label>
                 <input name="color" class="mb-2 mt-2" id="input-color" required type="text">
-                <input type="submit" class="input-radius" name="submit">
+                <input type="submit" value="Crear color" class="button-style button-blue clean-styles text-center" name="submit">
             </div>
 
             <div class="result">
@@ -383,7 +415,7 @@ if (isset($_POST['modelName']) && isset($_POST['brandId'])) {
             <div class="mb-2 flex flex-column">
                 <label class="" for="input-brand-name">ingrese una marca:</label>
                 <input name="brandName" id="input-brand-name" class="mb-2 mt-2" required type="text">
-                <input type="submit" class="input-radius" name="submit">
+                <input type="submit" value="Crear marca " class="button-style button-blue clean-styles text-center" name="submit">
             </div>
             <div class="result">
                 <?php if (isset($_POST['brandName'])) : ?>
@@ -411,7 +443,7 @@ if (isset($_POST['modelName']) && isset($_POST['brandId'])) {
             <div class="mb-2 flex flex-column">
                 <label for="modelName">ingrese un modelo:</label>
                 <input name="modelName" required id="modelName" class="mt-2 mb-2" type="text">
-                <input type="submit" class="input-radius" name="submit">
+                <input type="submit" value="Crear modelo " class="button-style button-blue clean-styles text-center" name="submit">
             </div>
             <?php if (isset($_POST['modelName'])) : ?>
                 <div class="result">

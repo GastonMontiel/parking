@@ -318,11 +318,45 @@ if (!isset($_GET["id"])) {
     .display-none {
       display: none;
     }
+
+    .navbar {
+      overflow: hidden;
+      background-color: #333;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+
+    .navbar a {
+      float: left;
+      display: block;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .navbar a:hover {
+      background: #ddd;
+      color: black;
+    }
+
+    .main {
+      padding: 16px;
+      margin-top: 30px;
+      height: 1500px;
+      /* Used in this example to enable scrolling */
+    }
   </style>
 </head>
 
 <body>
+
   <?php if (!isset($spaces) || empty($spaces)) : ?>
+    <div class="navbar">
+      <a href="/characteristics">Agregar caracteristicas</a>
+    </div>
     <div class="card-style">
       <div class="result">
         <p>
@@ -344,9 +378,11 @@ if (!isset($_GET["id"])) {
       </div>
     </div>
   <?php else : ?>
+    <div class="navbar">
+      <a href="/characteristics">Agregar caracteristicas</a>
+    </div>
     <div class="card-style">
       <p class="text-center fs-2">PARKING</p>
-
       <?php $variableToCalculateFloors = 0; ?>
       <div class='floors'>
         <?php foreach ($spaces as $key => $value) : ?>
@@ -389,6 +425,8 @@ if (!isset($_GET["id"])) {
 
           <?php endif ?>
         <?php endforeach ?>
+      </div>
+      <div class="mt-2">
       </div>
     </div>
   <?php endif ?>

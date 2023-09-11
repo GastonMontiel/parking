@@ -332,11 +332,39 @@ if (isset($_POST['licensePlate'])) {
       padding-left: 20px;
       padding-right: 20px;
     }
+
+    .navbar {
+      overflow: hidden;
+      background-color: #333;
+      position: fixed;
+      top: 0;
+      width: 100%;
+    }
+
+    .navbar a {
+      float: left;
+      display: block;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .navbar a:hover {
+      background: #ddd;
+      color: black;
+    }
   </style>
 </head>
 
 <body>
+  <div class="navbar">
+    <a href="/">Inicio</a>
+    <a href="/characteristics">Agregar caracteristicas</a>
+  </div>
   <div id="reserve-space-container" class="card-style">
+
     <p class="mb-3  fs-1 text-center" id="space-title">Reservar lugar: <?= $_GET["id"] ?> (piso: <?= $space->floor ?>)</p>
 
     <?php if (!empty($vehicle)) { ?>
